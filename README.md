@@ -18,6 +18,14 @@ In this little example i demonstrate a single server side application build by t
 The background image is selected on purpose as mono-static, which will be replaced with a stero-camera video stream. 
 The VR part is taken from [sketchfab](sketchfab.com), the model of [ogonek](https://sketchfab.com/3d-models/ka-50-black-shark-full-cockpit-free-f8d37afc49fc4e9fac2aba54e9ed51f8).
 
+The application is thought to be deployed on an ubuntu 20.04 server together with:
+
+[arrc mobile app - ARRC](https://github.com/onaycan/ARRC), which shall run on android client 
+and 
+[arrc mobile app - pi_video_streamer](https://github.com/onaycan/pi_video_streamer), which shall run on the same ubuntu server. 
+
+Please prepare your own certificates as described in Prerequisites. The certificate files are signed by my own, and there is less probability of discovering my password. 
+The certificates are there as placeholders only. 
 
 ### Built With
 One major framewrok is used to achieve the goal: three.js. 
@@ -73,11 +81,11 @@ you@yourmachine$ sudo python3 https.server.py
 By doing so, you will be using a self-signed certificate, which will be then later compatible with three.js features running on android client. 
 The https connection (for this date of 04.08.2020) is a neccesity to achieve the goal. 
 
-If you run on the client side (android in my case), the [arrc app - https://github.com/onaycan/ARRC](https://github.com/onaycan/ARRC), you will see the following on your mobile phone: 
+If you run on the client side (android in my case), the [arrc mobile app - ARRC](https://github.com/onaycan/ARRC), you will see the following on your mobile phone: 
 
 ![Image 3](./readme_pics/client_view.png?raw=true "Client View")
 
-
+The so-called [arrc mobile app - pi_video_streamer](https://github.com/onaycan/pi_video_streamer), which shall run on android client  shall be deployed on the same server as well. 
 <!-- LICENSE -->
 ## License
 
