@@ -20,9 +20,9 @@ The VR part is taken from [sketchfab](sketchfab.com), the model of [ogonek](http
 
 The application is thought to be deployed on an ubuntu 20.04 server together with:
 
-[arrc mobile app - ARRC](https://github.com/onaycan/ARRC), which shall run on android client 
-and 
-[arrc mobile app - pi_video_streamer](https://github.com/onaycan/pi_video_streamer), which shall run on the same ubuntu server. 
+[arrc mobile app - ARRC](https://github.com/onaycan/ARRC), which shall run on android client \
+and \
+[arrc mobile app - pi_video_streamer](https://github.com/onaycan/pi_video_streamer), which shall run on the same ubuntu server. \
 
 Please prepare your own certificates as described in Prerequisites. The certificate files are signed by my own, and there is less probability of discovering my password. 
 The certificates are there as placeholders only. 
