@@ -4,24 +4,22 @@
     <meta charset=UTF-8 />
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> 
-    <link rel="stylesheet" type="text/css" href="./styles/main.css" />
+    <link rel="stylesheet" type="text/css" href='{{ url_for("static", filename="css/main.css") }}' />
     <link rel="shortcut icon" href="#">
+    <script src='{{ url_for("static", filename="js/jquery.min.js") }}'></script>
   </head>
   <body>
-    <div class="backgrounddiv"><img style="-webkit-user-select: none;" src="https://10.42.0.1:5500/video_socket"  /></div>
+    <div class="backgrounddiv"><img style="-webkit-user-select: none;" src="https://10.42.0.1:5000/video_socket"  /></div>
     <script type="module">
-      import * as THREE from './js//three.module.js';
-      import { GLTFLoader } from './js/GLTFLoader.js';
-      import { DeviceOrientationControls } from './js/DeviceOrientationControls.js';
-      import { StereoEffect } from './js/StereoEffect.js';
-      //import { CSS3DyObject, CSS3DRenderer } from './js/CSS3DRenderer.js';
-
-
-      var scene, camera, renderer, container_front, effect, controls;
-
-      //use the following if you want to try with CSS3DRenderer
-      //var scene_back, container_back, renderer_back, video;
+      import * as THREE from '{{ url_for("static", filename="js/three.module.js") }}'
+      import { GLTFLoader } from '{{ url_for("static", filename="js/GLTFLoader.js") }}'
+      import { DeviceOrientationControls } from '{{ url_for("static", filename="js/DeviceOrientationControls.js") }}';
+      import { StereoEffect } from '{{ url_for("static", filename="js/StereoEffect.js") }}';;
       
+      var $ = jQuery;
+      $.ajaxSetup({async:false});
+      var scene, camera, renderer, container_front, effect, controls;
+      var prevtheta = 90;
       var mouseX = 0, mouseY = 0;
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
@@ -30,30 +28,11 @@
       animate();
 
       function init() {
-        //use the following if you want to try with CSS3DRenderer
-        //container_back = document.createElement( 'div' );
-				//container_back.style.position = "absolute"
-				
+        
 				container_front = document.createElement( 'div' );
 				container_front.style.position = "absolute"
         
-        //use the following if you want to try with CSS3DRenderer
-				//document.body.appendChild( container_back );
         document.body.appendChild( container_front );
-
-        //use the following if you want to try with CSS3DRenderer
-        /*
-        video = document.createElement('iframe');
-        video.src = "https://10.42.0.1:5500/video_socket";
-        var videoTexture = new CSS3DObject(video);
-        videoTexture.position.set( 250, 150, 0);// y moves up, z moves right, x seperates
-        videoTexture.rotation.set( 0, -Math.PI/2, 0);
-        videoTexture.scale.x = 1.0;
-        videoTexture.scale.y = 1.0;
-        videoTexture.scale.z = 1.0;
-        scene_back = new THREE.Scene();
-        scene_back.add(videoTexture);
-        */
 
         scene = new THREE.Scene();
         scene.background = null;
@@ -78,7 +57,7 @@
         // Load a glTF resource
         loader.load(
         	// resource URL
-        	'./model/scene.gltf',
+          '{{ url_for("static", filename="model/scene.gltf") }}',
         	// called when the resource is loaded
         	function ( gltf ) {
             
@@ -111,40 +90,25 @@
             
           }
         
-        
-          
         );
 
         renderer = new THREE.WebGLRenderer({ alpha: true, premultipliedAlpha: false, antialias: true });
         renderer.setClearColor( 0x000000, 0 );
         renderer.setSize(window.innerWidth,window.innerHeight);
         
-        //use the following if you want to try with CSS3DRenderer
-        //renderer_back = new CSS3DRenderer();
-        //renderer_back.setSize( window.innerWidth, window.innerHeight );
-
         controls = new DeviceOrientationControls( camera );
         controls.enabled = true
         controls.target = new THREE.Vector3(80.1, 130, 0);
 
-        //in case you use a different model, you may use the following as weill
-        //controls.screenOrientation = -180;
-        //controls.alphaOffset = -90.0/180.0*Math.PI
         controls.update();
         
         renderer.render(scene, camera);
-        //use the following if you want to try with CSS3DRenderer
-        //renderer_back.render(scene_back, camera);
         
         effect = new StereoEffect( renderer );
 				effect.setSize( window.innerWidth, window.innerHeight );
         
         container_front.appendChild(renderer.domElement);
-        //use the following if you want to try with CSS3DRenderer
-        //container_back.appendChild(renderer_back.domElement);
         
-        
-
       }
 
       function animate() {
@@ -154,15 +118,21 @@
           requestAnimationFrame( animate );
 
         }, 1000 / 30 );
-        renderer.autoClear = true;
-        renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.clear();
-				renderer.clearDepth();
+
+        setTimeout( function() {
+        var target = new THREE.Vector3(80.1, 130, 0);
+        var vector = camera.getWorldDirection(target);
+        var theta = THREE.Math.radToDeg(Math.atan2(target.z,Math.sqrt(target.x*target.x+target.y*target.y))) + 90;
+        //theta = theta - theta % 2;
+        var url = "https://10.42.0.1:5000/servo_socket?angle="
+        var route = url.concat(Math.floor(theta).toString()); 
+        $.get(route,
+        function(data, status){
+          alert("Data: " + data + "\nStatus: " + status);
+        });
+        }, 1000 / 50 );
+        
         render();
-        //use the following if you want to try with CSS3DRenderer
-        //renderer_back.render(scene_back, camera);				
-        renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.autoClear = false;
         controls.update();
       }
 
