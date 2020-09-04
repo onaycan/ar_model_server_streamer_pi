@@ -39,23 +39,18 @@
         scene = new THREE.Scene();
         scene.background = null;
       
-        camera = new THREE.PerspectiveCamera(80,window.innerWidth/window.innerHeight,0.1,5000);
+        camera = new THREE.PerspectiveCamera(40,window.innerWidth/window.innerHeight,1,5000);
         
-        camera.position.x = 160;
-        camera.position.y = 92;
-        camera.position.z = -62;
-        //camera.rotation.z+= 90 * Math.PI / 180;
-        //camera.up = new THREE.Vector3(0,1,0);
-        
-        //camera.lookAt(new THREE.Vector3(-25,92,-300));
-        //camera.updateProjectionMatrix();
+        camera.position.x = 80;
+        camera.position.y = 120;
+        camera.position.z = 0;
 
-        var hlight = new THREE.AmbientLight (0xffffff,0.5);
+        var hlight = new THREE.AmbientLight (0xffffff,15);
         //hlight.position.set(20,55,-30);
         scene.add(hlight);
 
-        var directionalLight = new THREE.DirectionalLight(0xffffff,5.3);
-        directionalLight.position.set(160,92,-62);
+        var directionalLight = new THREE.DirectionalLight(0xffffff,15);
+        directionalLight.position.set(80,130,0);
         directionalLight.castShadow = true;
         scene.add(directionalLight);
               
@@ -105,13 +100,11 @@
         renderer.setSize(window.innerWidth,window.innerHeight);
         
         controls = new DeviceOrientationControls( camera );
-        camera.updateProjectionMatrix();
-        
         controls.enabled = true
-        controls.target = new THREE.Vector3(160, 92, -62);
-        //controls.alphaOffset = -90.0/180.0*Math.PI
-        //controls.target.set(-25, 92, -100);
         
+        controls.target = new THREE.Vector3(80.1, 120, 0);
+        //controls.alphaOffset = -90.0/180.0*Math.PI
+
         controls.update();
         
         renderer.render(scene, camera);
@@ -133,7 +126,7 @@
         }, 1000 / 24 );
 
         setTimeout( function() {
-        var target = new THREE.Vector3(160, 92, -62);
+        var target = new THREE.Vector3(80.1, 120, 0);
         var vector = camera.getWorldDirection(target);
         var theta = THREE.Math.radToDeg(Math.atan2(target.z,Math.sqrt(target.x*target.x+target.y*target.y))) + 90;
         

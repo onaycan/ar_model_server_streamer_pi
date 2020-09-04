@@ -19,6 +19,7 @@ app = Flask(__name__)
 CORS(app) # This will enable CORS for all routes
 vs = WebcamVideoStream(src=0).start()
 fps = FPS().start()
+angle = 90
 
 servoPIN = 17
 GPIO.setmode(GPIO.BCM)
@@ -33,17 +34,18 @@ time.sleep(1)
 def SetAngle(angle):
     global p , servoPIN
     duty = angle / 18 + 2.5
-    GPIO.output(servoPIN, True)
+    #GPIO.output(servoPIN, True)
     p.ChangeDutyCycle(duty)
-    GPIO.output(servoPIN, False)
+    time.sleep(0.01)
+    #GPIO.output(servoPIN, False)
 
 def generate_frame():
     global outputFrame, fps
 	# loop over frames from the output stream
-    while fps._numFrames % 32 == 0:
+    while fps._numFrames%300==0:
         outputFrame = vs.read()
-        outputFrame = imutils.resize(outputFrame, width=700)
-        timestamp = datetime.datetime.now()
+        outputFrame = imutils.resize(outputFrame, width=400)
+        #timestamp = datetime.datetime.now()
         (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
         yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + 
 			bytearray(encodedImage) + b'\r\n')
@@ -63,14 +65,19 @@ def video_socket():
 
 @app.route("/servo_socket")
 def servo_socket():
-    global p
-    angle = request.args.get('angle', default = 90, type = int)
-    SetAngle(angle)
+    global p, angle
+    curangle = 180.0 - request.args.get('angle', default = 90, type = int)
+    if curangle != angle:
+        SetAngle(curangle)
+        angle = curangle
     return "angle is set to: " + str(angle)
 
 
 if __name__ == '__main__':
-	app.run(host="10.42.0.1", port="5000", ssl_context=('./certs/server.crt', './certs/server.key'), debug=True, use_reloader=False)
+    SetAngle(90)
+    app.run(host="10.42.0.1", port="5000", ssl_context=('./certs/server.crt', './certs/server.key'), debug=False, use_reloader=False)
 
 fps.stop()
 vs.stop()
+p.stop()
+GPIO.cleanup()
